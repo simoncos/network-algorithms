@@ -1,2 +1,2 @@
-# network-analysis
+# network-algorithms
 network analysis algorithms implementation
