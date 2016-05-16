@@ -24,7 +24,12 @@ from scipy import stats # only for ccdf slope fit
 
 def file_to_sparse_matrix(file):
     '''
-    Create a sparse sparse_matrix from the txt using dict.
+    Create a sparse sparse_matrix using dict from txt.
+    
+    Assumption: 
+    undirected(the file contains complete linking information from all nodes)
+    single graph
+    single component
     '''
     sparse_matrix = dict()
     with open(file) as f:
@@ -37,6 +42,33 @@ def file_to_sparse_matrix(file):
             else:
                 sparse_matrix[node_1].add(node_2)
                 sparse_matrix[node_2].add(node_1)    
+    return sparse_matrix
+
+def sqlite_to_sparse_matrix(node_1, node_2, table, db_file):
+    '''
+    Create a sparse sparse_matrix using dict from sqlite database.
+
+    Assumption: 
+    undirected(the file contains complete linking information from all nodes)
+    single graph
+    single component
+    '''    
+    import sqlite3
+    sparse_matrix = dict()
+    conn = sqlite3.connect(db_file)
+    cursor = conn.cursor()
+    cursor.execute('SELECT {0}, {1} FROM {2} WHERE {1} in (SELECT {0} from {2})'. \
+                    format(node_1, node_2, table))
+    links = cursor.fetchall()
+    for l in links:
+        node_1, node_2 = l[0], l[1]
+        if not node_1 in sparse_matrix:
+            sparse_matrix[node_1] = set([node_2])               
+        if not node_2 in sparse_matrix:
+            sparse_matrix[node_2] = set([node_1])
+        else:
+            sparse_matrix[node_1].add(node_2)
+            sparse_matrix[node_2].add(node_1)  
     return sparse_matrix
 
 def print_tops(centrality, top=10):
