@@ -1,2 +1,2 @@
 # network-algorithms
-network analysis algorithms implementation
+network analysis algorithms implementation with python 3

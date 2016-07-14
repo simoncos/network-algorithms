@@ -113,7 +113,7 @@ def degree_distribution(sparse_matrix):
     # fit the exponent of powerlaw with log-log ccdf, ln p(k) = −α ln k + c 
     degree_distribution_prob = {}
     for k in degree_distribution.keys(): # change node count to prob
-        degree_distribution_prob[k] = degree_distribution[k] / len(sparse_matrix)
+        degree_distribution_prob[k] = degree_distribution[k] / len(sparse_matrix) # python 2 will get all 0
     X = [math.log(k) for k in degree_distribution_prob.keys()]
     Y = [math.log(p) for p in degree_distribution_prob.values()]
     exponent = -(stats.linregress(X, Y).slope)
@@ -289,7 +289,6 @@ def main():
 
     print('top nodes with highest degree_centrality:')
     print_tops(degree_centrality(sparse_matrix))
-    degree_distribution(sparse_matrix)    
 
     print_tops(eigenvector_centrality(sparse_matrix))
     print_tops(katz_centrality(sparse_matrix))
@@ -300,6 +299,7 @@ def main():
     print('\nbottom nodes with lowest local_clustering_coefficent:')
     print_bottoms(local_clustering_coefficient(sparse_matrix))
     
+    degree_distribution(sparse_matrix)    
 
 if __name__ == '__main__':
     main()
